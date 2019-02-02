@@ -14,7 +14,9 @@
       </div>
       <ul v-show="showThemes">
         <li v-for="(item, index) in themes" :key="index">
-          <a> {{item.title}} </a>
+          <a 
+            :class="{on: item.id === itemId && type === 'daily'}" 
+            @click="choiceItem(item.id)"> {{item.name}}</a>
         </li>
       </ul>
     </div> 
@@ -40,14 +42,27 @@ export default {
       showThemes: false,
       type: 'recommend',
       themes: [],
+      itemId: 0,
+      list: []
     }
   },
   methods: {
     getThemes: function () {
-      $.axios.get('news/latest').then(res => {
-        this.themes = res.stories;
-        // console.log(this.themes)
+      $.axios.get('sections').then(res => {
+          console.log(res);
+        this.themes = res.data;
+        console.log(this.themes)
       });
+    },
+    choiceItem: function (id) {
+       this.itemId = id;
+       this.type = 'daily';
+       this.list = [];
+       let _this = this;
+       $.axios.get('section/'+id).then(res => {
+           _this.list = res;
+           console.log(res);
+       });
     }
   },
   mounted() {
