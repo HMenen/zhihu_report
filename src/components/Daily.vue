@@ -1,8 +1,22 @@
 <template>
   <div>
     <div class="daily-menu">
-      <div class="daily-menu-item">每日推荐</div>
-      <div class="daily-menu-item">主题日报</div>
+      <div 
+        class="daily-menu-item"
+        :class="{on: type == 'recommend'}" >
+        每日推荐
+      </div>
+      <div 
+        class="daily-menu-item"
+        :class="{on: type === 'daily'}"
+        @click="showThemes = !showThemes">
+        主题日报
+      </div>
+      <ul v-show="showThemes">
+        <li v-for="(item, index) in themes" :key="index">
+          <a> {{item.title}} </a>
+        </li>
+      </ul>
     </div> 
     <div class="daily-list">
       <daily-list></daily-list>
@@ -14,11 +28,30 @@
 
 <script>
 import DailyList from './DailyList.vue'
+import $ from '../../libs/util.js'
 
 export default {
   name: 'daily',
   components: {
       DailyList
+  },
+  data() {
+    return{
+      showThemes: false,
+      type: 'recommend',
+      themes: [],
+    }
+  },
+  methods: {
+    getThemes: function () {
+      $.axios.get('news/latest').then(res => {
+        this.themes = res.stories;
+        // console.log(this.themes)
+      });
+    }
+  },
+  mounted() {
+      this.getThemes();
   }
 }
 </script>
@@ -59,6 +92,12 @@ html, body{
   bottom: 0;
   overflow: auto;
   border-right: 1px solid #d7dde4;
+}
+a{
+  cursor: pointer ;
+}
+.daily-menu ul li a:hover, .daily-menu ul li a:hover{
+  color: #3399ff;
 }
 .daily-article{
   margin-left: 450px;

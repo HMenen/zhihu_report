@@ -12,7 +12,7 @@ Util.axios = axios.create({
 
 //添加响应拦截器
 Util.axios.interceptors.response.use(res => {
-  return res.date;
+  return res.data;
 })
 
 export default Util;
